@@ -3,6 +3,17 @@ let gameState = 0;
 let game;
 let points = 0;
 
+let pipeUpImg, pipeDownImg, birds = [];
+let pipeRatio = 180 / 1700;
+
+function preload() {
+  pipeUpImg = loadImage('./PipeUp.png');
+  pipeDownImg = loadImage('./PipeDown.png');
+  birds.push(loadImage('./Bird1.png'));
+  birds.push(loadImage('./Bird2.png'));
+  birds.push(loadImage('./Bird3.png'));
+}
+
 function setup() {
   createCanvas(700, 700, P2D);
   noStroke();
@@ -37,7 +48,11 @@ function menu() {
 
 function gameOver() {
   fill(0);
-  text('Oof Game Over\nClick to Restart\n\nPoints: ' + points, width / 2, height / 2);
+  text(
+    'Oof Game Over\nClick to Restart\n\nPoints: ' + points,
+    width / 2,
+    height / 2
+  );
 }
 
 function mousePressed() {
@@ -76,7 +91,7 @@ class Game {
       this.pipes.unshift(new Pipe(newY));
     }
     this.pipes.forEach((pipe, i) => {
-      if (pipe.x + pipe.w/2 < this.bird.x && !pipe.crossed) {
+      if (pipe.x + pipe.w / 2 < this.bird.x && !pipe.crossed) {
         pipe.crossed = true;
         points++;
       }
@@ -123,8 +138,25 @@ class Bird {
   }
 
   display() {
-    fill('yellow');
-    circle(this.x, this.y, this.size * 2);
+    push();
+    translate(this.x, this.y);
+
+    let r = atan(this.vel * Pipe.speed / 12);
+    rotate(0.8 + r)
+
+    image(
+      r > -0.2 ? r > 0.1 ? birds[0] : birds[1] : birds[2],
+      -this.size * 1.2,
+      -this.size * 1.2,
+      this.size * 2.4,
+      this.size * 2.4
+    );
+
+    // display hitbox
+    // fill(255, 0, 255, 50);
+    // circle(0, 0, this.size * 2);
+
+    pop();
   }
 }
 
@@ -155,8 +187,17 @@ class Pipe {
     let stopx = this.x + this.w / 2;
     let starty = this.y - this.h;
     let stopy = this.y + this.h;
-    rect(startx, 0, stopx, starty);
-    rect(startx, height, stopx, stopy);
+
+    image(pipeUpImg, startx, stopy, this.w, this.w / pipeRatio);
+    image(
+      pipeDownImg,
+      startx,
+      this.y - this.h - this.w / pipeRatio,
+      this.w,
+      this.w / pipeRatio
+    );
+    // rect(startx, 0, stopx, starty);
+    // rect(startx, height, stopx, stopy);
   }
 
   checkCollison(bird) {
@@ -164,10 +205,13 @@ class Pipe {
     let stopx = this.x + this.w / 2;
     let starty = this.y - this.h;
     let stopy = this.y + this.h;
-    
+
     let testX = min(max(bird.x, startx), stopx);
 
-    let testY = bird.y < this.y ? min(max(bird.y, 0), starty) : min(max(bird.y, stopy), height);
+    let testY =
+      bird.y < this.y
+        ? min(max(bird.y, 0), starty)
+        : min(max(bird.y, stopy), height);
 
     return dist(testX, testY, bird.x, bird.y) <= bird.size;
   }
