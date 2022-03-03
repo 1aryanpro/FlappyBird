@@ -112,7 +112,7 @@ class Game {
   }
 
   keyPressed() {
-    if (keyCode == 32) this.bird.vel = -5;
+    if (keyCode == 32) this.bird.vel = -6;
   }
 }
 
@@ -126,7 +126,7 @@ class Bird {
   }
 
   move() {
-    this.acc += 0.15;
+    this.acc += 12 * deltaTime/1000;
 
     this.vel += this.acc;
     this.y += this.vel;
@@ -141,7 +141,7 @@ class Bird {
     push();
     translate(this.x, this.y);
 
-    let r = atan(this.vel * Pipe.speed / 12);
+    let r = atan(this.vel * Pipe.speed / 300);
     rotate(0.8 + r)
 
     image(
@@ -161,7 +161,7 @@ class Bird {
 }
 
 class Pipe {
-  static speed = 3;
+  static speed = 150;
 
   constructor(y = height / 2, h = 140) {
     this.w = 80;
@@ -173,7 +173,7 @@ class Pipe {
   }
 
   move() {
-    this.x -= Pipe.speed;
+    this.x -= Pipe.speed * deltaTime / 1000;
     if (this.x < -this.w / 2) return true;
     return false;
   }
