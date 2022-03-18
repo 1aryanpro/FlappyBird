@@ -1,4 +1,4 @@
-// Menu, New Game, Playing Game, Game Over
+// Menu, New Game, Playing Game, Game Over, Consmetics
 let gameState = 0;
 let game;
 let score = 0;
@@ -11,6 +11,8 @@ let bg,
   bgPos = 0;
 let pipeRatio = 180 / 1700,
   bgRatio;
+let selectedSkin,
+  unlockedSkins = [true, false, false, false];
 
 function updateImages(cosmetic = 'base') {
   pipes[0] = loadImage(`./${cosmetic}/PipeUp.png`);
@@ -30,6 +32,8 @@ function updateImages(cosmetic = 'base') {
       bgRatio = 480 / 344;
       break;
   }
+
+  selectedSkin = cosmetic;
 }
 
 function setup() {
@@ -49,13 +53,15 @@ function draw() {
       break;
     case 1:
       game = new Game();
-      gameState++;
       break;
     case 2:
       game.run();
       break;
     case 3:
       gameOver();
+      break;
+    case 4:
+      cosmetics();
       break;
   }
 }
@@ -70,14 +76,20 @@ function menu() {
   rect(width / 2 - btnw / 2, height / 2, btnw, btnh);
   rect(width / 2 - btnw / 2, height * 0.7, btnw, btnh);
 
-  textAlign(CENTER, CENTER);
-  textSize(btnh * 0.4);
   fill(255);
+  textStyle(NORMAL);
+  textSize(btnh * 0.4);
+  textAlign(CENTER, CENTER);
   text('Play Game', width / 2, height / 2 + btnh / 2);
   text('Buy Skins', width / 2, height * 0.7 + btnh / 2);
   fill(0);
   textSize(60);
   text('Flappy Bird!', width / 2, height / 4);
+  textSize(40);
+  text('High Score: ' + highScore, width / 2, (height * 3) / 8);
+  textAlign(LEFT, CENTER);
+  textSize(20);
+  text(points + ' points', 20, 30);
 }
 
 function gameOver() {
@@ -90,27 +102,60 @@ function gameOver() {
   rect(width / 2 - btnw / 2, height / 2, btnw, btnh);
   rect(width / 2 - btnw / 2, height * 0.7, btnw, btnh);
 
+  fill(255);
+  textStyle(NORMAL);
   textAlign(CENTER, CENTER);
   textSize(btnh * 0.4);
-  fill(255);
   text('Play Again', width / 2, height / 2 + btnh / 2);
   text('Main Menu', width / 2, height * 0.7 + btnh / 2);
   fill(0);
   textSize(60);
   text(score, width / 2, height / 4);
+  textSize(40);
+  text('High Score: ' + highScore, width / 2, (height * 3) / 8);
+  textAlign(LEFT, CENTER);
+  textSize(20);
+  text(points + ' points', 20, 30);
 
   highScore = max(highScore, score);
+}
+
+function cosmetics() {
+  background('lightgreen');
+
+  fill('darkgreen');
+  rect(0, 0, width, 60);
+
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(20);
+  text('Back to Main Menu', width / 2, 30);
+
+  fill(0)
+  textSize(40)
+  text('Select Cosmetics', width / 2, height / 6);
+
+  cosSize = 150;
+  fill('darkgreen')
+  square(width/2 - cosSize - 10, height * 0.6 - cosSize - 10, cosSize)
+  square(width/2 + 10, height * 0.6 - cosSize - 10, cosSize)
+  square(width/2 - cosSize - 10, height * 0.6 + 10, cosSize)
+  square(width/2 + 10, height * 0.6 + 10, cosSize)
 }
 
 function mousePressed() {
   if (gameState == 0) {
     if (mouseY < height * 0.65) gameState = 1;
-    else console.log('open cosmetics');
+    else gameState = 4;
   }
 
   if (gameState == 3) {
     if (mouseY < height * 0.65) gameState = 1;
     else gameState = 0;
+  }
+
+  if (gameState == 4) {
+    if (mouseY < 60) gameState = 0;
   }
 }
 
@@ -121,7 +166,9 @@ class Game {
     this.bird = new Bird();
 
     this.pipes = [new Pipe()];
-    this.pipes[0].x = width + 300;
+    this.pipes[0].x = width + 200;
+
+    gameState = 2;
   }
 
   run() {
@@ -168,6 +215,7 @@ class Game {
     strokeWeight(3);
     stroke(0);
     text(score, width / 2, 50);
+
     noStroke();
     textAlign(LEFT, CENTER);
     textSize(20);
