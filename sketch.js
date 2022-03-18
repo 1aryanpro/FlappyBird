@@ -22,8 +22,8 @@ function updateImages(cosmetic = 'base') {
 
   switch (cosmetic) {
     case 'base':
-      pipeRatio = 180 / 1700;
-      bgRatio = 1;
+      pipeRatio = 180 / 1770;
+      bgRatio = 480 / 396;
       break;
     case 'swamp':
       pipeRatio = 180 / 1760;
@@ -82,25 +82,35 @@ function menu() {
 
 function gameOver() {
   background('lightgreen');
+
+  rectMode(CORNER);
+  fill('darkgreen');
+  let btnw = 200;
+  let btnh = 80;
+  rect(width / 2 - btnw / 2, height / 2, btnw, btnh);
+  rect(width / 2 - btnw / 2, height * 0.7, btnw, btnh);
+
+  textAlign(CENTER, CENTER);
+  textSize(btnh * 0.4);
+  fill(255);
+  text('Play Again', width / 2, height / 2 + btnh / 2);
+  text('Main Menu', width / 2, height * 0.7 + btnh / 2);
   fill(0);
-  text(
-    'OOF Game Over\nClick to Restart\n\nScore: ' + score,
-    width / 2,
-    height / 2
-  );
+  textSize(60);
+  text(score, width / 2, height / 4);
 
   highScore = max(highScore, score);
 }
 
 function mousePressed() {
   if (gameState == 0) {
-    if (mouseY < height * 0.65)
-      gameState = 1;
-    else console.log('open cosmetics')
+    if (mouseY < height * 0.65) gameState = 1;
+    else console.log('open cosmetics');
   }
 
   if (gameState == 3) {
-    gameState = 0;
+    if (mouseY < height * 0.65) gameState = 1;
+    else gameState = 0;
   }
 }
 
@@ -140,7 +150,7 @@ class Game {
       if (pipe.x + pipe.w / 2 < this.bird.x && !pipe.crossed) {
         pipe.crossed = true;
         score++;
-        points += floor(score/10) + 1;
+        points += floor(score / 10) + 1;
       }
 
       if (pipe.move()) this.pipes.length = i;
@@ -155,9 +165,12 @@ class Game {
     fill(255);
     textStyle(BOLD);
     textSize(60);
+    strokeWeight(3);
+    stroke(0);
     text(score, width / 2, 50);
-    textAlign(LEFT, CENTER)
-    textSize(20)
+    noStroke();
+    textAlign(LEFT, CENTER);
+    textSize(20);
     text(points + ' points', 20, 30);
   }
 
