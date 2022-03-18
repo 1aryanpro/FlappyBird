@@ -41,7 +41,7 @@ function setup() {
   noStroke();
 
   textAlign(CENTER, CENTER);
-  updateImages();
+  updateImages('swamp');
 }
 
 function draw() {
