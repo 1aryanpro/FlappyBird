@@ -12,7 +12,7 @@ let bg,
 let pipeRatio = 180 / 1700,
   bgRatio;
 let selectedSkin,
-  unlockedSkins = [true, false, false, false];
+  unlockedSwamp = false;
 
 function updateImages(cosmetic = 'base') {
   pipes[0] = loadImage(`./${cosmetic}/PipeUp.png`);
@@ -33,7 +33,7 @@ function updateImages(cosmetic = 'base') {
       break;
   }
 
-  selectedSkin = cosmetic;
+  selectedSkin = cosmetic == 'base' ? 'hills' : cosmetic;
 }
 
 function setup() {
@@ -41,7 +41,7 @@ function setup() {
   noStroke();
 
   textAlign(CENTER, CENTER);
-  updateImages('swamp');
+  updateImages('base');
 }
 
 function draw() {
@@ -87,6 +87,9 @@ function menu() {
   text('Flappy Bird!', width / 2, height / 4);
   textSize(40);
   text('High Score: ' + highScore, width / 2, (height * 3) / 8);
+  textSize(30);
+  fill(0,0,0, 100)
+  text('Press Space in Game to Flap', width / 2, (height * 3.6) / 8);
   textAlign(LEFT, CENTER);
   textSize(20);
   text(points + ' points', 20, 30);
@@ -131,16 +134,35 @@ function cosmetics() {
   textSize(20);
   text('Back to Main Menu', width / 2, 30);
 
-  fill(0)
-  textSize(40)
-  text('Select Cosmetics', width / 2, height / 6);
+  fill(0);
+  textSize(40);
+  text('Select Skin', width / 2, height / 6);
+  textSize(20);
+  text(points + ' points', width / 2, (height * 3) / 12);
+  text(selectedSkin + ' Currently Selected', width / 2, (height * 4) / 12);
 
   cosSize = 150;
-  fill('darkgreen')
-  square(width/2 - cosSize - 10, height * 0.6 - cosSize - 10, cosSize)
-  square(width/2 + 10, height * 0.6 - cosSize - 10, cosSize)
-  square(width/2 - cosSize - 10, height * 0.6 + 10, cosSize)
-  square(width/2 + 10, height * 0.6 + 10, cosSize)
+  fill('darkgreen');
+  push();
+  translate(width / 2, height * 0.65);
+
+  square(-cosSize - 10, -cosSize - 10, cosSize);
+  square(10, -cosSize - 10, cosSize);
+  square(-cosSize - 10, 10, cosSize);
+  square(10, 10, cosSize);
+
+  fill(255);
+  textSize(25);
+  text('Hills', -cosSize / 2 - 10, -cosSize / 2 - 10);
+  text(
+    'Swamp' + (unlockedSwamp ? '' : '\n500 Points'),
+    cosSize / 2 + 10,
+    -cosSize / 2 - 10
+  );
+  text('Locked\n 1500 Points', -cosSize / 2 - 10, cosSize / 2 + 10);
+  text('Locked\n 2500 Points', cosSize / 2 + 10, cosSize / 2 + 10);
+
+  pop();
 }
 
 function mousePressed() {
@@ -156,6 +178,18 @@ function mousePressed() {
 
   if (gameState == 4) {
     if (mouseY < 60) gameState = 0;
+
+    if (mouseY < height * 0.65) {
+      if (mouseX < width / 2) {
+        updateImages('base');
+      } else {
+        if (unlockedSwamp) updateImages('swamp');
+        else if (points >= 500) {
+          unlockedSwamp = true;
+          updateImages('swamp');
+        }
+      }
+    }
   }
 }
 
