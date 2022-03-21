@@ -14,6 +14,20 @@ let pipeRatio = 180 / 1700,
 let selectedSkin,
   unlockedSwamp = false;
 
+function saveGame() {
+  storeItem('highScore', highScore);
+  storeItem('unlockedSwamp', unlockedSwamp);
+  storeItem('points', points);
+  storeItem('saved', true);
+}
+
+function loadGame() {
+  if (!getItem('saved')) return;
+  highScore = getItem('highScore');
+  unlockedSwamp = getItem('unlockedSwamp');
+  points = getItem('points');
+}
+
 function updateImages(cosmetic = 'base') {
   pipes[0] = loadImage(`./${cosmetic}/PipeUp.png`);
   pipes[1] = loadImage(`./${cosmetic}/PipeDown.png`);
@@ -39,6 +53,8 @@ function updateImages(cosmetic = 'base') {
 function setup() {
   createCanvas(700, 700, P2D);
   noStroke();
+
+  loadGame();
 
   textAlign(CENTER, CENTER);
   updateImages('base');
@@ -88,7 +104,7 @@ function menu() {
   textSize(40);
   text('High Score: ' + highScore, width / 2, (height * 3) / 8);
   textSize(30);
-  fill(0,0,0, 100)
+  fill(0, 0, 0, 100);
   text('Press Space in Game to Flap', width / 2, (height * 3.6) / 8);
   textAlign(LEFT, CENTER);
   textSize(20);
@@ -96,6 +112,7 @@ function menu() {
 }
 
 function gameOver() {
+  saveGame();
   background('lightgreen');
 
   rectMode(CORNER);
