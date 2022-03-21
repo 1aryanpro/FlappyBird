@@ -196,13 +196,14 @@ function mousePressed() {
   if (gameState == 4) {
     if (mouseY < 60) gameState = 0;
 
-    if (mouseY < height * 0.65) {
+    else if (mouseY < height * 0.65) {
       if (mouseX < width / 2) {
         updateImages('base');
       } else {
         if (unlockedSwamp) updateImages('swamp');
         else if (points >= 500) {
           unlockedSwamp = true;
+          points -= 500;
           updateImages('swamp');
         }
       }
