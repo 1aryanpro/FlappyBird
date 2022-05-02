@@ -195,7 +195,6 @@ function mousePressed() {
 
   if (gameState == 4) {
     if (mouseY < 60) gameState = 0;
-
     else if (mouseY < height * 0.65) {
       if (mouseX < width / 2) {
         updateImages('base');
@@ -377,6 +376,38 @@ class Pipe {
         : min(max(bird.y, stopy), height);
 
     return dist(testX, testY, bird.x, bird.y) <= bird.size;
+  }
+}
+
+class Button {
+  constructor(x, y, w, h, label, color, textColor, textSize, onClick) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.label = label;
+    this.color = color;
+    this.textColor = textColor;
+    this.textSize = textSize;
+
+    this.onClick = onClick;
+  }
+
+  display() {
+    noStroke();
+
+    fill(color);
+    rect(this.x, this.y, this.w, this.h);
+
+    fill(this.textColor)
+    textSize(this.textSize);
+    textAlign(CENTER, CENTER);
+    text(label, this.x + this.w/2, this.y + this.h/2)
+  }
+
+  click() {
+    if(mouseX < this.x || mouseX > this.x + this.w || mouseY < this.y || mouseY > this.y + this.h) return;
+    this.onClick();
   }
 }
 
